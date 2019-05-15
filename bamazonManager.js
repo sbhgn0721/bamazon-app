@@ -115,28 +115,96 @@ function addMoreProducts() {
             }
         ])
         .then(function (answer) {
-            
+
             var query1 = "UPDATE products SET stock_quantity =stock_quantity + ? WHERE item_id =?";
-            connection.query(query1, [ answer.addQuantity_units, answer.addQuantity_itemID], function (err,res) {
+            connection.query(query1, [answer.addQuantity_units, answer.addQuantity_itemID], function (err, res) {
                 if (err) throw err;
                 console.log("The updated product information for the item:");
 
                 var query2 = "SELECT * FROM products WHERE item_id = ?";
-            connection.query(query2, [answer.addQuantity_itemID], function (err, res) {
-                console.log(
-                    "Item ID: " +
-                    res[0].item_id +
-                    " || Product Name: " +
-                    res[0].product_name +
-                    " || Price: " +
-                    res[0].price +
-                    " || Stock Quantity: " +
-                    res[0].stock_quantity
+                connection.query(query2, [answer.addQuantity_itemID], function (err, res) {
+                    console.log(
+                        "Item ID: " +
+                        res[0].item_id +
+                        " || Product Name: " +
+                        res[0].product_name +
+                        " || Price: " +
+                        res[0].price +
+                        " || Stock Quantity: " +
+                        res[0].stock_quantity
 
-                )
-                runInquirerManagement();
+                    )
+                    runInquirerManagement();
+                })
             })
-            })
-            
+
         })
+}
+
+//define function addNewProduct to allow manager to add a completely new product to the products table
+function addNewProduct() {
+    inquirer
+        .prompt([
+
+            {
+                name: "newProduct_Name",
+                type: "input",
+                message: "What product name you would like to add to the store?"
+            },
+            {
+                name: "departmentName",
+                type: "list",
+                message: "Which department you would like to choose for the new product?",
+                choices: ["electronics", "beauty&health", "home&kitchen", "baby", "add new"],
+
+            },
+            {
+                name: "departmentName",
+                type: "input",
+                message: "Please input new department name?",
+                when: function (answer) {
+                    return answer.departmentName === "add new";
+                }
+            },
+            {
+                name: "newPrice",
+                type: "input",
+                message: "What is the price of the product you would like to add to the store?"
+            },
+            {
+                name: "newStock_Quantity",
+                type: "input",
+                message: "How many units of the product you would like to add to the store?"
+            }
+        ])
+        .then(function (answer) {
+            addNewHelper(answer);
+        })
+}
+
+function addNewHelper(answer) {
+    var query1 = "INSERT INTO products (product_name, department_name, price, stock_quantity) VALUES (?,?,?,?)";
+    connection.query(query1, [answer.newProduct_Name, answer.departmentName, answer.newPrice, answer.newStock_Quantity], function (err) {
+        if (err) throw err;
+
+        var query2 = "SELECT * FROM products WHERE product_name =?";
+        connection.query(query2, [answer.newProduct_Name], function (err, res) {
+            console.log("The new product information:");
+            console.log(
+                "Item ID: " +
+                res[0].item_id +
+                "|| Product Name: " +
+                res[0].product_name +
+                "|| Department Name: " +
+                res[0].department_name +
+                "|| Price: " +
+                res[0].price +
+                "|| Stock Quantity: " +
+                res[0].stock_quantity
+
+            )
+            runInquirerManagement();
+        })
+    })
+
 }
