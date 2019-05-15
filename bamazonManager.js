@@ -108,19 +108,21 @@ function addMoreProducts() {
                 type: "input",
                 message: "What item id you would like to add more quantity?"
             },
-
             {
                 name: "addQuantity_units",
                 type: "input",
                 message: "How many units you would like to add?"
             }
-
         ])
         .then(function (answer) {
-            var query = "UPDATE products SET stock_quantity =? WHERE item_id =?";
-            connection.query(query, [answer.addQuantity_units, answer.addQuantity_itemID], function (err, res) {
+            
+            var query1 = "UPDATE products SET stock_quantity =stock_quantity + ? WHERE item_id =?";
+            connection.query(query1, [ answer.addQuantity_units, answer.addQuantity_itemID], function (err,res) {
                 if (err) throw err;
                 console.log("The updated product information for the item:");
+
+                var query2 = "SELECT * FROM products WHERE item_id = ?";
+            connection.query(query2, [answer.addQuantity_itemID], function (err, res) {
                 console.log(
                     "Item ID: " +
                     res[0].item_id +
@@ -132,7 +134,9 @@ function addMoreProducts() {
                     res[0].stock_quantity
 
                 )
-                runSearch();
+                runInquirerManagement();
             })
+            })
+            
         })
 }
