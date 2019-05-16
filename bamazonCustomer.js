@@ -18,7 +18,6 @@ connection.connect(function (err) {
 //define function displayInfo to display all products info for customers
 function displayInfo() {
     var query = "SELECT * FROM products";
-
     connection.query(query, function (err, res) {
         if (err) throw err;
         console.log("Product Information For Customer\n");
@@ -35,12 +34,35 @@ function displayInfo() {
                 "|| Stock Quantity: " +
                 res[i].stock_quantity
             );
-        item_idSearch();
+        runInquirerCustomer();
     });
-
-
-
 }
+
+
+//define function runInquirerCustomer to let customers choose an action
+function runInquirerCustomer() {
+    console.log("================================");
+    inquirer
+        .prompt({
+            name: "customerAction",
+            type: "list",
+            message: "What you would you like to do?",
+            choices: ["I would like to purchase an item.", "Exit"]
+
+        })
+        .then(function (choice) {
+            switch (choice.customerAction) {
+                case "I would like to purchase an item.":
+                    item_idSearch();
+                    break;
+
+                case "Exit":
+                    connection.end();
+                    break;
+            }
+        })
+}
+
 
 //define function item_idSearch to let customers input item id that they went to purchase
 function item_idSearch() {
@@ -48,8 +70,7 @@ function item_idSearch() {
         .prompt({
             name: "item_id",
             type: "input",
-            message: "What item id would you like to purchase?"
-
+            message: "What item id you would like to purchase?"
         })
         .then(function (answer) {
             var query = "SELECT * FROM products WHERE ?";
@@ -66,12 +87,14 @@ function item_idSearch() {
                         res[i].price +
                         "|| Stock Quantity: " +
                         res[i].stock_quantity
-                    );
+                    )
                 }
                 purchase_unitSearch(res[0]);
             })
         })
+
 }
+
 
 //define function purchase_unitSearch to let customers to decide the units of products they want to purchase
 function purchase_unitSearch(result) {
@@ -102,13 +125,21 @@ function stock_quantityCheck(result, input) {
 
 function order_place(result, input) {
     var newQuanity = result.stock_quantity - input.purchase_unit;
-    var totalPrice = input.purchase_unit * result.price
-    var query = "UPDATE products SET stock_quantity=?, products_sales =? WHERE item_id =?";
-    connection.query(query, [newQuanity, totalPrice, result.item_id], function (err) {
-        if (err) throw err;
+    var totalPrice = (input.purchase_unit * result.price).toFixed(2);
+    
 
-        console.log("The total price for the product " + result.item_id + " is " + totalPrice);
+    var query = "UPDATE products SET stock_quantity=? products_sales = ? WHERE item_id =?";
+    connection.query(query, [newQuanity, newProductsSales, result.item_id], function (err, res) {
+        if (err) throw err;
+        console.log("The total price for the product with item id " + result.item_id + " is " + totalPrice);
+        
+
+
+
+        runInquirerCustomer();
     });
 }
+
+
 
 

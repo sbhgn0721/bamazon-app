@@ -47,7 +47,7 @@ function runInquirerSupervisor() {
 
 //define the function displayProductsSale_Department to allow supervisor to view product_sales, total_profit by department
 function displayProductsSale_Department() {
-    var query = "SELECT SUM(products.products_sales) as products_sale, departments.department_id, departments.department_name, departments.over_head_costs FROM products Inner JOIN departments ON products.department_name = departments.department_name Group by departments.department_id";
+    var query = "SELECT SUM(products.products_sales) as products_sales, departments.department_id, departments.department_name, departments.over_head_costs FROM products Inner JOIN departments ON products.department_name = departments.department_name Group by departments.department_id";
     connection.query(query, function (err, res) {
         if (err) throw err;
 
@@ -57,8 +57,8 @@ function displayProductsSale_Department() {
             colWidths: [20, 20, 20, 20, 20]
         });
         for (var i = 0; i < res.length; i++) {
-            var totalProfit = res[i].products_sale - res[i].over_head_costs;
-            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].products_sale, totalProfit]
+            var totalProfit = (res[i].products_sales - res[i].over_head_costs).toFixed(2);
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].products_sales.toFixed(2), totalProfit]
             );
         }
 

@@ -1,0 +1,1 @@
+UPDATE products SET department_name = 'electronics' WHERE department_name = 'electornics';
