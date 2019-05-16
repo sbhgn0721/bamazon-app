@@ -102,11 +102,12 @@ function stock_quantityCheck(result, input) {
 
 function order_place(result, input) {
     var newQuanity = result.stock_quantity - input.purchase_unit;
-    var query = "UPDATE products SET stock_quantity=? WHERE item_id =?";
-    connection.query(query, [newQuanity, result.item_id], function (err, res) {
+    var totalPrice = input.purchase_unit * result.price
+    var query = "UPDATE products SET stock_quantity=?, products_sales =? WHERE item_id =?";
+    connection.query(query, [newQuanity, totalPrice, result.item_id], function (err) {
         if (err) throw err;
 
-        console.log("The total price for the product " + result.item_id + " is " + input.purchase_unit * result.price);
+        console.log("The total price for the product " + result.item_id + " is " + totalPrice);
     });
 }
 
