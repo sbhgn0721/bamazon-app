@@ -1,6 +1,7 @@
 # Bamazon App
 
 ## The demo video link for this app is:
+https://drive.google.com/file/d/1ygJGa1XsBsqVuuuuCY9MtrdKs4_ZReaW/view
 
 
 ## Overview
