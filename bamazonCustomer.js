@@ -125,17 +125,15 @@ function stock_quantityCheck(result, input) {
 
 function order_place(result, input) {
     var newQuanity = result.stock_quantity - input.purchase_unit;
-    var totalPrice = (input.purchase_unit * result.price).toFixed(2);
-    
+    var totalPrice = input.purchase_unit * result.price;
+    var totalPriceRound = Math.round(totalPrice * 100) / 100
+    var newProductsSales = result.products_sales + totalPriceRound;
 
-    var query = "UPDATE products SET stock_quantity=? products_sales = ? WHERE item_id =?";
+
+    var query = "UPDATE products SET stock_quantity=?, products_sales = ? WHERE item_id =?";
     connection.query(query, [newQuanity, newProductsSales, result.item_id], function (err, res) {
         if (err) throw err;
-        console.log("The total price for the product with item id " + result.item_id + " is " + totalPrice);
-        
-
-
-
+        console.log("The total price for the product with item id " + result.item_id + " is " + totalPriceRound);
         runInquirerCustomer();
     });
 }

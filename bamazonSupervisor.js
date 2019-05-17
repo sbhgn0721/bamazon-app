@@ -57,8 +57,9 @@ function displayProductsSale_Department() {
             colWidths: [20, 20, 20, 20, 20]
         });
         for (var i = 0; i < res.length; i++) {
-            var totalProfit = (res[i].products_sales - res[i].over_head_costs).toFixed(2);
-            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].products_sales.toFixed(2), totalProfit]
+            var totalProfit = res[i].products_sales - res[i].over_head_costs;
+            var totalProfitRound = Math.round(totalProfit * 100) / 100
+            table.push([res[i].department_id, res[i].department_name, res[i].over_head_costs, res[i].products_sales, totalProfitRound]
             );
         }
 
